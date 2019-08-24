@@ -1,0 +1,8 @@
+{
+    "name": "slashbunny/humble-trove-downloader",
+    "type": "project",
+    "license": "GPL-3.0-or-later",
+    "require": {
+        "guzzlehttp/guzzle": "^6.3"
+    }
+}
