@@ -141,7 +141,7 @@ function getGuzzleHttpClient($session_key)
  */
 function getTroveData($client)
 {
-    $page_num   = 1;
+    $page_num   = 0;
     $trove_data = [];
 
     while (true) {
