@@ -86,7 +86,7 @@ foreach ($trove_data as $game) {
                     if ($downloadTotal === 0) {
                         $pct = 0;
                     } else {
-                        $pct = round(($downloadedBytes / $downloadTotal) * 100, 2);
+                        $pct = number_format(($downloadedBytes / $downloadTotal) * 100, 2);
                     }
 
                     echo "\r    Progress: " . $pct . '%';
