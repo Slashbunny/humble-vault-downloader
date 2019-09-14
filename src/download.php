@@ -52,7 +52,7 @@ foreach ($trove_data as $game) {
 
         // File already exists- Check md5
         if (file_exists($dl_path)) {
-            echo "    $file already exists!\n";
+            echo "    $file already exists! Checking md5sum...\n";
             $existing_md5 = md5_file($dl_path);
 
             if ($existing_md5 === $md5) {
