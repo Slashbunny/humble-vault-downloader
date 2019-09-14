@@ -5,7 +5,7 @@ systems, from [Humble Trove](https://www.humblebundle.com/monthly/trove). You
 need a Humble Monthly subscription to download these games.
 
 Existing files have their md5 checksums checked versus what the Humble Bundle API
-reports. If there is a mismatch, you'll need to delete or remove the offending
+reports. If there is a mismatch, you'll need to delete or move the offending
 file and run the script again.
 
 This script was meant for archival purposes, so it does not have way to filter
