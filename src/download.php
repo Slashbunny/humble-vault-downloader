@@ -50,10 +50,29 @@ foreach ($trove_data as $game) {
 
         echo "   Checking $os ($file)\n";
 
-        // File already exists- Check md5
+        // File already exists- Check md5sum
         if (file_exists($dl_path)) {
-            echo "    $file already exists! Checking md5sum...\n";
-            $existing_md5 = md5_file($dl_path);
+            echo "    $file already exists! Checking md5sum ";
+
+            // Cache the md5sum in a file alongside the download
+            $cache_path = dirname($dl_path) . DIRECTORY_SEPARATOR
+                         . "." . basename($dl_path) . ".md5sum";
+
+            $file_date  = filemtime($dl_path);
+            $cache_date = file_exists($cache_path) ? filemtime($cache_path) : 0;
+
+            // If cache is newer than file, use it
+            if ($cache_date > $file_date) {
+                echo "[Using Cache] ...\n";
+                $existing_md5 = file_get_contents($cache_path);
+
+            } else {
+                echo "[Creating Cache] ...\n";
+                $existing_md5 = md5_file($dl_path);
+
+                // Cache md5sum to file
+                file_put_contents($cache_path, $existing_md5);
+            }
 
             if ($existing_md5 === $md5) {
                 echo "        Matching md5sum $md5 at $dl_path \n";
