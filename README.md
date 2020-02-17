@@ -28,12 +28,6 @@ After cloning this repository, run `composer` in the project's main directory
 $ composer install
 ```
 
-or, if you downloaded `composer.phar` separately:
-
-```bash
-$ php composer.phar install
-```
-
 # Usage
 
 ## API Key
@@ -48,16 +42,22 @@ it.
 $ ./src/download.php DOWNLOAD_PATH HUMBLE_API_KEY
 ```
 
-or, if PHP is not available in your path:
-
-```bash
-$ /path/to/php src/download.php DOWNLOAD_PATH HUMBLE_API_KEY
-```
-
 Example (this is not a real key):
 
 ```bash
 $ ./src/download.php /home/downloads/trove "eyJ1GzZJE0oqwEaunyOYX3yrlkFUxPJq8PFWCgkKOHM00\075|1566665561|JR7m2nO769sO2Je4C2fE"
+```
+
+# Docker
+
+A docker image is available so you don't need to setup PHP or deal with
+dependencies:
+
+```bash
+$ docker run -it \
+    -v /your/path/to/downloads/folder/:/downloads \
+    -u $(id -u):$(id -g) \
+    slashbunny/humble-trove-downloader:latest /downloads "eyJ1GzZJE0oqwEaunyOYX3yrlkFUxPJq8PFWCgkKOHM00\075|1566665561|JR7m2nO769sO2Je4C2fE"
 ```
 
 # Help
