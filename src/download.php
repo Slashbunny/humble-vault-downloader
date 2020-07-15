@@ -6,13 +6,17 @@ require_once __DIR__ . '/../vendor/autoload.php';
 set_error_handler('catchError');
 
 // Program takes 2 parameters
-if ($argc !== 3) {
+if ($argc < 3) {
     printUsage($argv);
 }
 
 // Parameters to script
 $base_path = $argv[1];
 $trove_key = $argv[2];
+$skipGames = [];
+$skipOS = [];
+if(!empty($argv[3])) $skipGames = explode(',', $argv[3]);
+if(!empty($argv[4])) $skipOS = explode(',', $argv[4]);
 
 // Ensure the provided path is valid
 if (!is_dir($base_path)) {
@@ -31,12 +35,24 @@ $trove_data = getTroveData($client);
 $count = 0;
 
 foreach ($trove_data as $game) {
+    
+    if(in_array($game->{'human-name'}, $skipGames)){
+        echo "Skipping $display \n";
+        continue;
+    }
+
     $display   = $game->{'human-name'};
     $downloads = $game->downloads;
 
     echo "Processing $display ...\n";
 
     foreach ($downloads as $os => $dl) {
+
+        if(in_array($os, $skipOS)){
+            echo "   Skipping OS $os for $display \n";
+            continue;
+        }
+
         $file = $dl->url->web;
         $game = $dl->machine_name;
         $md5  = $dl->md5;
@@ -128,6 +144,8 @@ function printUsage($argv) {
     echo "Usage: $argv[0] DOWNLOAD_PATH HUMBLE_API_KEY \n\n";
     echo "    DOWNLOAD_PATH  - Base path to download files\n";
     echo "    HUMBLE_API_KEY - Session from your browser's cookies\n\n";
+    echo "    SKIP_GAMES - (optional) comma separated list of games to skip\n\n";
+    echo "    SKIP_OS - (optional) comma separated list of OSs to skip\n\n";
 
     exit(1);
 }
