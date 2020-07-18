@@ -8,9 +8,6 @@ Existing files have their md5 checksums checked versus what the Humble Bundle AP
 reports. If there is a mismatch, you'll need to delete or move the offending
 file and run the script again.
 
-This script was meant for archival purposes, so it does not have way to filter
-what games are downloaded.
-
 # Setup
 
 ## Pre-requisites
@@ -47,6 +44,25 @@ Example (this is not a real key):
 ```bash
 $ ./src/download.php /home/downloads/trove "eyJ1GzZJE0oqwEaunyOYX3yrlkFUxPJq8PFWCgkKOHM00\075|1566665561|JR7m2nO769sO2Je4C2fE"
 ```
+
+## Excluding OS or Games
+
+You can exclude operating systems with the `-o` parameter and games with the `-g`
+parameter. To exclude multiple, specify them in a comma-separated list as follows:
+
+```
+$ ./src/download.php -o mac,linux -g game1,game2,game3 /home/downloads/trove "eyJ1GzZJE0oqwEaunyOYX3yrlkFUxPJq8PFWCgkKOHM00\075|1566665561|JR7m2nO769sO2Je4C2fE"
+```
+
+`-o` can be "mac", "linux", and/or "windows". `-g` should be the "machine name"
+of the games, which are output in square brackets when downloading:
+
+```
+Processing The Flame in the Flood [theflameintheflood_trove]...
+```
+
+In the above example, you should use `theflameintheflood_trove` when using the
+`-g` parameter.
 
 # Docker
 

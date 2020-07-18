@@ -5,21 +5,34 @@ require_once __DIR__ . '/../vendor/autoload.php';
 
 set_error_handler('catchError');
 
-// Program takes 2 parameters
-if ($argc !== 3) {
-    printUsage($argv);
+// Save program name
+$argv0 = $argv[0];
+
+// Parse command line options options
+$offset  = 0;
+$options = getopt("o:g:", [], $offset);
+
+$exclude_os    = !empty($options['o']) ? explode(',', $options['o']) : [];
+$exclude_games = !empty($options['g']) ? explode(',', $options['g']) : [];
+
+// Remove command line options from argv, so that only the path/api key remain
+$argv = array_splice($argv, $offset);
+
+// There must be 2 remaining parameters after removing the options
+if (count($argv) !== 2) {
+    printUsage($argv0);
 }
 
 // Parameters to script
-$base_path = $argv[1];
-$trove_key = $argv[2];
+$base_path = $argv[0];
+$trove_key = $argv[1];
 
 // Ensure the provided path is valid
 if (!is_dir($base_path)) {
     echo "ERROR: " . $base_path . " is not a valid directory or does not exist! \n";
     echo "       Create the directory and try again.\n\n";
 
-    printUsage($argv);
+    printUsage($argv0);
 }
 
 // Trove HTTP Client
@@ -32,9 +45,16 @@ $count = 0;
 
 foreach ($trove_data as $game) {
     $display   = $game->{'human-name'};
+    $game_code = $game->machine_name;
     $downloads = $game->downloads;
 
-    echo "Processing $display ...\n";
+    // Check if this is a game that we are excluding from download
+    if (in_array($game_code, $exclude_games)) {
+        echo "Skipping $display [$game_code] (excluded)...\n";
+        continue;
+    }
+
+    echo "Processing $display [$game_code]...\n";
 
     foreach ($downloads as $os => $dl) {
         $file = $dl->url->web;
@@ -42,6 +62,12 @@ foreach ($trove_data as $game) {
         $md5  = $dl->md5;
 
         $dl_path = $base_path . DIRECTORY_SEPARATOR . $os . DIRECTORY_SEPARATOR . $file;
+
+        // Check if this is an OS that we are excluding from download
+        if (in_array($os, $exclude_os)) {
+            echo "   Skipping $os release (excluded)...\n";
+            continue;
+        }
 
         // Ensure full path exists on disk
         if (!is_dir(dirname($dl_path))) {
@@ -124,10 +150,13 @@ echo "Downloaded $count games\n";
 /**
  * Prints usage of script
  */
-function printUsage($argv) {
-    echo "Usage: $argv[0] DOWNLOAD_PATH HUMBLE_API_KEY \n\n";
-    echo "    DOWNLOAD_PATH  - Base path to download files\n";
-    echo "    HUMBLE_API_KEY - Session from your browser's cookies\n\n";
+function printUsage($program_name) {
+    echo "Usage: $program_name [options] <path> <api_key>\n\n";
+    echo "    path    - Base path to download files\n";
+    echo "    api_key - Humble bundle session from your browser's cookies\n\n";
+    echo "    options:\n";
+    echo "      -o <os_list>    Comma-separated list of OS to exclude (windows,linux,mac)\n";
+    echo "      -g <game_list>  Comma-separated list of games to skip (produced in the output of this program in square brackets)\n\n";
 
     exit(1);
 }
