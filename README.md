@@ -64,6 +64,15 @@ Processing The Flame in the Flood [theflameintheflood_trove]...
 In the above example, you should use `theflameintheflood_trove` when using the
 `-g` parameter.
 
+You can also find this "machine name" value on the Humble Trove website. When
+you click on the game you are planning to exclude, the URL in your browser will
+change to the following format:
+
+`https://www.humblebundle.com/subscription/trove?selected=theflameintheflood_trove`
+
+The value of the `selected=` parameter in the URL is the same name you should
+use when excluding games from download using this tool.
+
 # Docker
 
 A docker image is available so you don't need to setup PHP or deal with
