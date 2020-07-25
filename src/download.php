@@ -197,7 +197,7 @@ function getTroveData($client)
 
         // Download each page of trove results
         $page_data = json_decode(
-            $client->request('GET', 'trove/chunk?index=' . $page_num)->getBody()
+            $client->request('GET', 'trove/chunk?property=start&direction=desc&index=' . $page_num)->getBody()
         );
 
         // If results are empty, return data
