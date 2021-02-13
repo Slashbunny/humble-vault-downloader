@@ -123,15 +123,16 @@ foreach ($trove_data as $game) {
             [
                 'sink'     => $dl_path,
                 'progress' => function(
-                    $downloadTotal,
-                    $downloadedBytes,
-                    $uploadTotal,
-                    $uploadedBytes
+                    $curl_resource,
+                    $download_total,
+                    $downloaded_bytes,
+                    $upload_total,
+                    $uploaded_bytes
                 ) {
-                    if ($downloadTotal === 0) {
+                    if ($download_total === 0) {
                         $pct = 0;
                     } else {
-                        $pct = number_format(($downloadedBytes / $downloadTotal) * 100, 2);
+                        $pct = number_format(($downloaded_bytes / $download_total) * 100, 2);
                     }
 
                     echo "\r    Progress: " . $pct . '%';
