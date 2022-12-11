@@ -1,8 +1,10 @@
-# Humble Trove Downloader
+# Humble Vault (Trove) Downloader
 
 Quick and dirty script to download all games, for all operating
-systems, from [Humble Trove](https://www.humblebundle.com/monthly/trove). You
-need a Humble Monthly subscription to download these games.
+systems, from [Humble Vault](https://www.humblebundle.com/membership/collection) (formerly
+known as Humble Trove). This does not download all games from the Humble App- It
+only downloads the "Vault" games. You need a Humble Choice subscription to
+download these games.
 
 Existing files have their md5 checksums checked versus what the Humble Bundle API
 reports. If there is a mismatch, you'll need to delete or move the offending
@@ -42,7 +44,7 @@ $ ./src/download.php DOWNLOAD_PATH HUMBLE_API_KEY
 Example (this is not a real key):
 
 ```bash
-$ ./src/download.php /home/downloads/trove "eyJ1GzZJE0oqwEaunyOYX3yrlkFUxPJq8PFWCgkKOHM00\075|1566665561|JR7m2nO769sO2Je4C2fE"
+$ ./src/download.php /home/downloads/humble "eyJ1GzZJE0oqwEaunyOYX3yrlkFUxPJq8PFWCgkKOHM00\075|1566665561|JR7m2nO769sO2Je4C2fE"
 ```
 
 ## Excluding OS or Games
@@ -51,27 +53,18 @@ You can exclude operating systems with the `-o` parameter and games with the `-g
 parameter. To exclude multiple, specify them in a comma-separated list as follows:
 
 ```
-$ ./src/download.php -o mac,linux -g game1,game2,game3 /home/downloads/trove "eyJ1GzZJE0oqwEaunyOYX3yrlkFUxPJq8PFWCgkKOHM00\075|1566665561|JR7m2nO769sO2Je4C2fE"
+$ ./src/download.php -o mac,linux -g game1,game2,game3 /home/downloads/humble "eyJ1GzZJE0oqwEaunyOYX3yrlkFUxPJq8PFWCgkKOHM00\075|1566665561|JR7m2nO769sO2Je4C2fE"
 ```
 
 `-o` can be "mac", "linux", and/or "windows". `-g` should be the "machine name"
 of the games, which are output in square brackets when downloading:
 
 ```
-Processing The Flame in the Flood [theflameintheflood_trove]...
+Processing The Flame in the Flood [theflameintheflood_vault]...
 ```
 
-In the above example, you should use `theflameintheflood_trove` when using the
+In the above example, you should use `theflameintheflood_vault` when using the
 `-g` parameter.
-
-You can also find this "machine name" value on the Humble Trove website. When
-you click on the game you are planning to exclude, the URL in your browser will
-change to the following format:
-
-`https://www.humblebundle.com/subscription/trove?selected=theflameintheflood_trove`
-
-The value of the `selected=` parameter in the URL is the same name you should
-use when excluding games from download using this tool.
 
 # Docker
 
