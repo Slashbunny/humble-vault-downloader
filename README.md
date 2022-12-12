@@ -75,7 +75,7 @@ dependencies:
 $ docker run -it \
     -v /your/path/to/downloads/folder/:/downloads \
     -u $(id -u):$(id -g) \
-    slashbunny/humble-trove-downloader:latest /downloads "eyJ1GzZJE0oqwEaunyOYX3yrlkFUxPJq8PFWCgkKOHM00\075|1566665561|JR7m2nO769sO2Je4C2fE"
+    slashbunny/humble-vault-downloader:latest /downloads "eyJ1GzZJE0oqwEaunyOYX3yrlkFUxPJq8PFWCgkKOHM00\075|1566665561|JR7m2nO769sO2Je4C2fE"
 ```
 
 # Help

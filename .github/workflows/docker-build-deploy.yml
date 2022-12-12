@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Docker Image
 
 on:
   push:
@@ -19,4 +19,3 @@ jobs:
       with:
         push: true
         tags: slashbunny/humble-vault-downloader:latest
-        
