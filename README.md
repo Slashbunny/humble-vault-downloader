@@ -31,9 +31,9 @@ $ composer install
 
 ## API Key
 
-See the [instructions here](https://github.com/talonius/hb-downloader/wiki/Using-Session-Information-From-Windows-For-hb-downloader) on
-how to get a session key from your browser while logged into the Humble Bundle website. This script will not work without
-it.
+Get the value of the cookie called `_simpleauth_sess` from your browser while logged
+into the Humble Bundle website. This script will not work without it. The value
+of this cookie is used below as `HUMBLE_API_KEY`
 
 ## Running the Script
 
