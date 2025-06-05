@@ -10,12 +10,12 @@ $argv0 = $argv[0];
 
 // Parse command line options options
 $offset  = 0;
-$options = getopt("o:g:d:G", [], $offset);
+$options = getopt("o:g:d:GBs", [], $offset);
 
-$exclude_os    = !empty($options['o']) ? explode(',', $options['o']) : [];
-$exclude_games = !empty($options['g']) ? explode(',', $options['g']) : [];
-$dir_structure = !empty($options['d']) ? explode(',', $options['d']) : ["os"]:
-$group_by_game = isset($options['G']);
+$exclude_os     = !empty($options['o']) ? explode(',', $options['o']) : [];
+$exclude_games  = !empty($options['g']) ? explode(',', $options['g']) : [];
+$dir_structure  = !empty($options['d']) ? explode(',', $options['d']) : ["os"];
+$strip_url_path = false;
 
 // Remove command line options from argv, so that only the path/api key remain
 $argv = array_splice($argv, $offset);
@@ -23,6 +23,19 @@ $argv = array_splice($argv, $offset);
 // There must be 2 remaining parameters after removing the options
 if (count($argv) !== 2) {
     printUsage($argv0);
+}
+
+// Override dir_structure depending on present options
+if (isset($options['B'])) {
+    $dir_structure = ["title","os"];
+    $strip_url_path = true;
+} elseif (isset($options['G'])) {
+    $dir_structure = ["title"];
+}
+
+// Strip url path from saved file when option present
+if (isset($options['s'])) {
+    $strip_url_path = true;
 }
 
 // Parameters to script
@@ -65,13 +78,34 @@ foreach ($trove_data as $game) {
 
         // Generate download path based off passed options
         $dl_path = $base_path;
-        foreach(($group_by_game ? ["game"] : $dir_structure) as $dir) {
-            if (strcasecmp($dir, "os") === 0) $dl_path .= DIRECTORY_SEPARATOR . $os;
-            if (strcasecmp($dir, "game") === 0) $dl_path .= DIRECTORY_SEPARATOR . $game;
-            if (strcasecmp($dir, "display") === 0) $dl_path .= DIRECTORY_SEPARATOR . preg_replace("/[^a-z0-9\_\-\.]/i", '', $display);
+        foreach($dir_structure as $dir) {
+            switch (true) {
+                case strcasecmp($dir, "os") === 0:
+                    $dl_path .= DIRECTORY_SEPARATOR . $os; break;
+                case strcasecmp($dir, "game") === 0:
+                    $dl_path .= DIRECTORY_SEPARATOR . $game_code; break;
+                case strcasecmp($dir, "title") === 0:
+                    $dl_path .= DIRECTORY_SEPARATOR . preg_replace("/[^a-z0-9_\-\.\s+]/i", '', $display); break;
+                case strcasecmp($dir, "title-ns") === 0:
+                    $dl_path .= DIRECTORY_SEPARATOR . preg_replace(
+                        "/[^a-z0-9_\-\.]/i",
+                        '',
+                        preg_replace('/\s+/', '_', $display)
+                    );
+                    break;
+            }
         }
-        $dl_path .= DIRECTORY_SEPARATOR . $file;
 
+        if ($strip_url_path) {
+            $lastSlashPos = strrpos($file, '/');
+            if ($lastSlashPos !== false) {
+                $dl_path .= DIRECTORY_SEPARATOR . substr($file, $lastSlashPos + 1);
+            } else {
+                $dl_path .= DIRECTORY_SEPARATOR . $file;
+            }
+        } else {
+            $dl_path .= DIRECTORY_SEPARATOR . $file;
+        }
 
         // Check if this is an OS that we are excluding from download
         if (in_array($os, $exclude_os)) {
@@ -167,9 +201,10 @@ function printUsage($program_name) {
     echo "    options:\n";
     echo "      -o <os_list>    Comma-separated list of OS to exclude (windows,linux,mac)\n";
     echo "      -g <game_list>  Comma-separated list of games to skip (produced in the output of this program in square brackets)\n";
-    echo "      -d <dir_list>   Comma-seperated list of how the directories will be strucutred\n"
-    echo "      -G              Option to group downloaded files by game instead of platform, overides -d\n"
-
+    echo "      -d <dir_list>   Comma-seperated list of how the directories will be strucutred (os,game-code,title,title-ns)\n";
+    echo "      -G              Option to group downloaded files by game instead of platform, overides -d (uses '-d title' internally)\n";
+    echo "      -B              Option to group downloaded files by game and then platform, overrides -d and -G (uses '-d title,os -s' internally)\n";
+    echo "      -s              Option to turn on path stripping from downloaded files, default off\n\n";
     exit(1);
 }
 
