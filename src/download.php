@@ -10,10 +10,12 @@ $argv0 = $argv[0];
 
 // Parse command line options options
 $offset  = 0;
-$options = getopt("o:g:", [], $offset);
+$options = getopt("o:g:d:G", [], $offset);
 
 $exclude_os    = !empty($options['o']) ? explode(',', $options['o']) : [];
 $exclude_games = !empty($options['g']) ? explode(',', $options['g']) : [];
+$dir_structure = !empty($options['d']) ? explode(',', $options['d']) : ["os"]:
+$group_by_game = isset($options['G']);
 
 // Remove command line options from argv, so that only the path/api key remain
 $argv = array_splice($argv, $offset);
@@ -61,7 +63,15 @@ foreach ($trove_data as $game) {
         $game = $dl->machine_name;
         $md5  = $dl->md5;
 
-        $dl_path = $base_path . DIRECTORY_SEPARATOR . $os . DIRECTORY_SEPARATOR . $file;
+        // Generate download path based off passed options
+        $dl_path = $base_path;
+        foreach(($group_by_game ? ["game"] : $dir_structure) as $dir) {
+            if (strcasecmp($dir, "os") === 0) $dl_path .= DIRECTORY_SEPARATOR . $os;
+            if (strcasecmp($dir, "game") === 0) $dl_path .= DIRECTORY_SEPARATOR . $game;
+            if (strcasecmp($dir, "display") === 0) $dl_path .= DIRECTORY_SEPARATOR . preg_replace("/[^a-z0-9\_\-\.]/i", '', $display);
+        }
+        $dl_path .= DIRECTORY_SEPARATOR . $file;
+
 
         // Check if this is an OS that we are excluding from download
         if (in_array($os, $exclude_os)) {
@@ -156,7 +166,9 @@ function printUsage($program_name) {
     echo "    api_key - Humble bundle session from your browser's cookies\n\n";
     echo "    options:\n";
     echo "      -o <os_list>    Comma-separated list of OS to exclude (windows,linux,mac)\n";
-    echo "      -g <game_list>  Comma-separated list of games to skip (produced in the output of this program in square brackets)\n\n";
+    echo "      -g <game_list>  Comma-separated list of games to skip (produced in the output of this program in square brackets)\n";
+    echo "      -d <dir_list>   Comma-seperated list of how the directories will be strucutred\n"
+    echo "      -G              Option to group downloaded files by game instead of platform, overides -d\n"
 
     exit(1);
 }
