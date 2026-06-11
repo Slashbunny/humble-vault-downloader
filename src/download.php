@@ -78,14 +78,17 @@ foreach ($trove_data as $game) {
 
         // Generate download path based off passed options
         $dl_path = $base_path;
-        foreach($dir_structure as $dir) {
+        foreach ($dir_structure as $dir) {
             switch (true) {
                 case strcasecmp($dir, "os") === 0:
-                    $dl_path .= DIRECTORY_SEPARATOR . $os; break;
+                    $dl_path .= DIRECTORY_SEPARATOR . $os;
+                    break;
                 case strcasecmp($dir, "game") === 0:
-                    $dl_path .= DIRECTORY_SEPARATOR . $game_code; break;
+                    $dl_path .= DIRECTORY_SEPARATOR . $game_code;
+                    break;
                 case strcasecmp($dir, "title") === 0:
-                    $dl_path .= DIRECTORY_SEPARATOR . preg_replace("/[^a-z0-9_\-\.\s+]/i", '', $display); break;
+                    $dl_path .= DIRECTORY_SEPARATOR . preg_replace("/[^a-z0-9_\-\.\s+]/i", '', $display);
+                    break;
                 case strcasecmp($dir, "title-ns") === 0:
                     $dl_path .= DIRECTORY_SEPARATOR . preg_replace(
                         "/[^a-z0-9_\-\.]/i",
@@ -135,7 +138,6 @@ foreach ($trove_data as $game) {
             if ($cache_date > $file_date) {
                 echo "[Using Cache] ...\n";
                 $existing_md5 = file_get_contents($cache_path);
-
             } else {
                 echo "[Creating Cache] ...\n";
                 $existing_md5 = md5_file($dl_path);
@@ -166,7 +168,7 @@ foreach ($trove_data as $game) {
             $url,
             [
                 'sink'     => $dl_path,
-                'progress' => function(
+                'progress' => function (
                     $download_total,
                     $downloaded_bytes,
                     $upload_total,
@@ -194,7 +196,8 @@ echo "Downloaded $count games\n";
 /**
  * Prints usage of script
  */
-function printUsage($program_name) {
+function printUsage($program_name)
+{
     echo "Usage: $program_name [options] <path> <api_key>\n\n";
     echo "    path    - Base path to download files\n";
     echo "    api_key - Humble bundle session from your browser's cookies\n\n";
@@ -219,7 +222,8 @@ function getGuzzleHttpClient($session_key)
     ];
 
     $cookie_jar = \GuzzleHttp\Cookie\CookieJar::fromArray(
-        $cookies, 'humblebundle.com'
+        $cookies,
+        'humblebundle.com'
     );
 
     $client = new GuzzleHttp\Client([
@@ -269,10 +273,12 @@ function getTroveData($client)
 /**
  * Returns download URL for given user, game and file (win, mac, linux, etc)
  */
-function getDownloadLink($client, $game, $file) {
-
+function getDownloadLink($client, $game, $file)
+{
     $result = json_decode(
-        $client->request('POST', 'api/v1/user/download/sign',
+        $client->request(
+            'POST',
+            'api/v1/user/download/sign',
             [
                 'form_params' => [
                     'machine_name' => $game,
@@ -289,7 +295,8 @@ function getDownloadLink($client, $game, $file) {
 /**
  * Handle any notices/warnings/errors
  */
-function catchError($errNo, $errStr, $errFile, $errLine) {
+function catchError($errNo, $errStr, $errFile, $errLine)
+{
     echo "$errStr in $errFile on line $errLine\n";
 
     exit(1);
